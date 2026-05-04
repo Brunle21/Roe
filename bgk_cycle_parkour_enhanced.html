@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BGK CYCLE PARKOUR - Enhanced</title>
+    <title>MX Offroad Master - Enhanced Racing</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Arial', sans-serif;
-            background: #1a1a1a;
+            background: #0a0a0a;
             overflow: hidden;
             user-select: none;
         }
@@ -22,93 +22,184 @@
             display: block;
         }
         
-        #splitScreenContainer {
+        #gameContainer {
             width: 100vw;
             height: 100vh;
             display: flex;
             position: relative;
         }
         
-        .screen {
+        .game-view {
             flex: 1;
             position: relative;
             overflow: hidden;
         }
         
-        #divider {
-            width: 4px;
+        .divider {
+            width: 3px;
             height: 100vh;
-            background: linear-gradient(90deg, #FF6B00 0%, #FFD700 50%, #FF6B00 100%);
-            box-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+            background: linear-gradient(180deg, #FF6B00, #FFD700, #FF6B00);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
             z-index: 100;
         }
         
+        /* ===== HUD STYLES ===== */
         .hud {
             position: absolute;
             color: #00FF41;
             font-weight: bold;
-            text-shadow: 0 0 5px rgba(0, 255, 65, 0.8);
-            font-size: 14px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
             z-index: 50;
             pointer-events: none;
+            font-family: 'Courier New', monospace;
         }
         
         .speed-display {
             top: 20px;
             left: 20px;
-            font-size: 24px;
-        }
-        
-        .lap-display {
-            top: 60px;
-            left: 20px;
-            font-size: 18px;
-        }
-        
-        .trick-display {
-            top: 100px;
-            left: 20px;
-            font-size: 16px;
+            font-size: 32px;
             color: #FFD700;
-            animation: trickPulse 0.5s ease-out;
         }
         
-        @keyframes trickPulse {
-            0% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
+        .speed-bar {
+            top: 70px;
+            left: 20px;
+            width: 200px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00FF41;
+            border-radius: 3px;
+            overflow: hidden;
         }
         
-        .status-display {
-            top: 140px;
+        .speed-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00FF41, #FFD700, #FF6B00);
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .fuel-display {
+            top: 110px;
             left: 20px;
             font-size: 14px;
             color: #00FFFF;
         }
         
-        .minimap {
-            bottom: 20px;
-            right: 20px;
+        .fuel-bar {
+            top: 135px;
+            left: 20px;
             width: 150px;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00FF41;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+            height: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00FFFF;
+            border-radius: 2px;
+            overflow: hidden;
         }
         
-        .intro-screen {
+        .fuel-bar-fill {
+            height: 100%;
+            background: #00FFFF;
+            width: 100%;
+            transition: width 0.2s;
+        }
+        
+        .damage-display {
+            top: 160px;
+            left: 20px;
+            font-size: 14px;
+            color: #FF4444;
+        }
+        
+        .damage-bar {
+            top: 185px;
+            left: 20px;
+            width: 150px;
+            height: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #FF4444;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .damage-bar-fill {
+            height: 100%;
+            background: #FF4444;
+            width: 0%;
+            transition: width 0.2s;
+        }
+        
+        .lap-display {
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            text-align: right;
+        }
+        
+        .position-display {
+            top: 70px;
+            right: 20px;
+            font-size: 18px;
+            color: #FFD700;
+            text-align: right;
+        }
+        
+        .gear-display {
+            top: 110px;
+            right: 20px;
+            font-size: 28px;
+            color: #FF6B00;
+            text-align: right;
+        }
+        
+        .terrain-indicator {
+            bottom: 100px;
+            left: 20px;
+            font-size: 14px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00FF41;
+            border-radius: 3px;
+        }
+        
+        .minimap {
+            bottom: 20px;
+            left: 20px;
+            width: 180px;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00FF41;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .minimap-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #FFD700;
+        }
+        
+        .minimap-player {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00FF41;
+            box-shadow: 0 0 8px #00FF41;
+        }
+        
+        /* ===== MAIN MENU ===== */
+        .main-menu {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -118,44 +209,37 @@
             text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
         }
         
-        .intro-screen.hidden {
+        .main-menu.hidden {
             display: none;
         }
         
-        .intro-title {
-            font-size: 48px;
+        .menu-title {
+            font-size: 56px;
             font-weight: bold;
-            margin-bottom: 20px;
-            animation: titleGlow 2s infinite;
+            margin-bottom: 10px;
+            animation: glowPulse 2s infinite;
         }
         
-        @keyframes titleGlow {
-            0%, 100% {
-                text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
-                transform: scale(1);
-            }
-            50% {
-                text-shadow: 0 0 20px rgba(0, 255, 65, 1), 0 0 30px rgba(255, 107, 0, 0.8);
-                transform: scale(1.05);
-            }
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 65, 0.8); }
+            50% { text-shadow: 0 0 30px rgba(255, 107, 0, 1), 0 0 40px rgba(0, 255, 65, 0.8); }
         }
         
-        .intro-subtitle {
-            font-size: 24px;
-            margin-bottom: 40px;
+        .menu-subtitle {
+            font-size: 18px;
             color: #FFD700;
+            margin-bottom: 50px;
         }
         
-        .map-selector {
+        .menu-buttons {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            gap: 15px;
             margin-bottom: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
         
-        .map-button {
-            padding: 15px 30px;
+        .menu-button {
+            padding: 15px 40px;
             font-size: 18px;
             background: rgba(0, 255, 65, 0.1);
             border: 2px solid #00FF41;
@@ -164,32 +248,181 @@
             border-radius: 5px;
             transition: all 0.3s;
             font-weight: bold;
+            min-width: 300px;
+            text-align: center;
         }
         
-        .map-button:hover {
+        .menu-button:hover {
             background: rgba(0, 255, 65, 0.3);
-            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .track-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .track-button {
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00FF41;
+            color: #00FF41;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .track-button:hover {
+            background: rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+        }
+        
+        .track-button.selected {
+            background: #00FF41;
+            color: #0a0a0a;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 1);
+        }
+        
+        /* ===== SETTINGS PANEL ===== */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: #00FF41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+        
+        .settings-panel.hidden {
+            display: none;
+        }
+        
+        .settings-content {
+            background: rgba(26, 26, 46, 0.9);
+            border: 2px solid #00FF41;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .settings-title {
+            font-size: 32px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+        }
+        
+        .setting-label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .setting-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(0, 255, 65, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .setting-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00FF41;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+        
+        .setting-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00FF41;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+        
+        .setting-toggle {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #00FF41;
+            background: rgba(0, 255, 65, 0.1);
+            color: #00FF41;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn.active {
+            background: #00FF41;
+            color: #0a0a0a;
+        }
+        
+        .close-settings {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00FF41;
+            color: #00FF41;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .close-settings:hover {
+            background: rgba(0, 255, 65, 0.3);
             box-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
         }
         
-        .map-button.selected {
-            background: #00FF41;
-            color: #1a1a1a;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 1);
+        /* ===== RACE UI ===== */
+        .race-hud {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00FF41;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 14px;
+            color: #00FF41;
+            z-index: 50;
         }
         
-        .intro-controls {
-            font-size: 16px;
-            text-align: center;
-            margin-top: 30px;
-            color: #00FFFF;
-        }
-        
-        .intro-controls div {
-            margin: 8px 0;
-        }
-        
-        .race-timer {
+        .lap-timer {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -201,7 +434,7 @@
             font-weight: bold;
         }
         
-        .race-timer.hidden {
+        .lap-timer.hidden {
             display: none;
         }
         
@@ -218,7 +451,7 @@
             align-items: center;
             z-index: 2000;
             color: #FFD700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
         }
         
         .finish-screen.hidden {
@@ -228,1142 +461,996 @@
         .finish-title {
             font-size: 56px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             animation: finishPulse 0.6s;
         }
         
         @keyframes finishPulse {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
-        .finish-info {
-            font-size: 24px;
-            margin: 10px 0;
+        .finish-stats {
+            font-size: 20px;
+            margin: 15px 0;
+            text-align: center;
         }
         
-        .restart-instruction {
-            font-size: 18px;
-            margin-top: 30px;
-            color: #00FFFF;
-            animation: blink 1s infinite;
+        .finish-buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
         }
         
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .finish-button {
+            padding: 12px 30px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00FF41;
+            color: #00FF41;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .finish-button:hover {
+            background: rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
+        }
+        
+        .pause-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+            color: #00FF41;
+        }
+        
+        .pause-screen.hidden {
+            display: none;
+        }
+        
+        .pause-title {
+            font-size: 48px;
+            margin-bottom: 40px;
+        }
+        
+        .pause-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .pause-button {
+            padding: 12px 40px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00FF41;
+            color: #00FF41;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+            min-width: 250px;
+            text-align: center;
+        }
+        
+        .pause-button:hover {
+            background: rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
         }
     </style>
 </head>
 <body>
-    <div class="intro-screen" id="introScreen">
-        <div class="intro-title">🏍️ BGK CYCLE PARKOUR 🏍️</div>
-        <div class="intro-subtitle">Two-Player Split-Screen Stunt Racing</div>
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <div class="menu-title">🏍️ MX OFFROAD MASTER 🏍️</div>
+        <div class="menu-subtitle">Extreme Dirt Bike Racing</div>
         
-        <div style="margin-bottom: 30px; font-size: 16px; color: #00FFFF;">Select a Track:</div>
-        <div class="map-selector" id="mapSelector"></div>
+        <div class="track-selector" id="trackSelector"></div>
         
-        <div class="intro-controls">
-            <div><strong>Player 1 (Left Screen):</strong></div>
-            <div>W/S - Accelerate/Brake | A/D - Flip Air | Space - Boost | Q/E - Wheelie/Stoppie</div>
-            <div style="margin-top: 15px;"><strong>Player 2 (Right Screen):</strong></div>
-            <div>↑/↓ - Accelerate/Brake | ←/→ - Steer | Shift - Boost | Q/E - Wheelie/Stoppie</div>
-            <div style="margin-top: 15px; color: #FFD700;">R - Restart Race | Press any button to start</div>
+        <div class="menu-buttons">
+            <button class="menu-button" onclick="game.startRace()">START RACE</button>
+            <button class="menu-button" onclick="game.showSettings()">SETTINGS</button>
         </div>
     </div>
     
-    <div class="race-timer hidden" id="raceTimer"></div>
+    <!-- Settings Panel -->
+    <div class="settings-panel hidden" id="settingsPanel">
+        <div class="settings-content">
+            <div class="settings-title">⚙️ SETTINGS</div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    Master Volume: <span id="volumeValue">100</span>%
+                </div>
+                <input type="range" min="0" max="100" value="100" class="setting-slider" id="volumeSlider">
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    Music Volume: <span id="musicVolumeValue">100</span>%
+                </div>
+                <input type="range" min="0" max="100" value="100" class="setting-slider" id="musicVolumeSlider">
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    Sound FX: <span id="sfxVolumeValue">100</span>%
+                </div>
+                <input type="range" min="0" max="100" value="100" class="setting-slider" id="sfxVolumeSlider">
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">Graphics Quality</div>
+                <div class="setting-toggle">
+                    <button class="toggle-btn active" onclick="game.setGraphicsQuality('high')">HIGH</button>
+                    <button class="toggle-btn" onclick="game.setGraphicsQuality('medium')">MEDIUM</button>
+                    <button class="toggle-btn" onclick="game.setGraphicsQuality('low')">LOW</button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">Camera Mode</div>
+                <div class="setting-toggle">
+                    <button class="toggle-btn active" onclick="game.setCameraMode('chase')">CHASE</button>
+                    <button class="toggle-btn" onclick="game.setCameraMode('hood')">HOOD</button>
+                    <button class="toggle-btn" onclick="game.setCameraMode('orbit')">ORBIT</button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    Difficulty: <span id="difficultyValue">Normal</span>
+                </div>
+                <input type="range" min="1" max="3" value="2" class="setting-slider" id="difficultySlider">
+            </div>
+            
+            <button class="close-settings" onclick="game.hideSettings()">CLOSE</button>
+        </div>
+    </div>
     
+    <!-- Pause Screen -->
+    <div class="pause-screen hidden" id="pauseScreen">
+        <div class="pause-title">PAUSED</div>
+        <div class="pause-buttons">
+            <button class="pause-button" onclick="game.resumeRace()">RESUME</button>
+            <button class="pause-button" onclick="game.showSettings()">SETTINGS</button>
+            <button class="pause-button" onclick="game.returnToMenu()">MAIN MENU</button>
+        </div>
+    </div>
+    
+    <!-- Finish Screen -->
     <div class="finish-screen hidden" id="finishScreen">
-        <div class="finish-title">🏁 RACE FINISHED! 🏁</div>
-        <div class="finish-info" id="finishInfo"></div>
-        <div class="restart-instruction">Press R to Restart or Select New Track</div>
+        <div class="finish-title">🏁 RACE COMPLETE 🏁</div>
+        <div class="finish-stats" id="finishStats"></div>
+        <div class="finish-buttons">
+            <button class="finish-button" onclick="game.startRace()">RACE AGAIN</button>
+            <button class="finish-button" onclick="game.returnToMenu()">MAIN MENU</button>
+        </div>
     </div>
     
-    <div id="splitScreenContainer">
-        <div class="screen" id="screen1">
-            <div class="hud">
-                <div class="speed-display" id="speed1">Speed: 0 km/h</div>
-                <div class="lap-display" id="lap1">Lap: 1/3</div>
-                <div class="trick-display hidden" id="trick1"></div>
-                <div class="status-display" id="status1">Distance: 0m</div>
+    <!-- Game Container -->
+    <div id="gameContainer">
+        <div class="game-view" id="view1">
+            <div class="hud" id="hud1">
+                <div class="speed-display" id="speed1">250 km/h</div>
+                <div class="speed-bar" id="speedBar1"><div class="speed-bar-fill"></div></div>
+                <div class="fuel-display" id="fuel1">FUEL: 100%</div>
+                <div class="fuel-bar" id="fuelBar1"><div class="fuel-bar-fill"></div></div>
+                <div class="damage-display" id="damage1">DAMAGE: 0%</div>
+                <div class="damage-bar" id="damageBar1"><div class="damage-bar-fill"></div></div>
+                <div class="lap-display" id="lap1">LAP 1/3</div>
+                <div class="position-display" id="pos1">1st</div>
+                <div class="gear-display" id="gear1">4th</div>
+                <div class="terrain-indicator" id="terrain1">TERRAIN: Dirt</div>
+                <div class="minimap" id="minimap1"></div>
             </div>
-            <div class="minimap" id="minimap1"></div>
         </div>
         
-        <div id="divider"></div>
+        <div class="divider"></div>
         
-        <div class="screen" id="screen2">
-            <div class="hud">
-                <div class="speed-display" id="speed2">Speed: 0 km/h</div>
-                <div class="lap-display" id="lap2">Lap: 1/3</div>
-                <div class="trick-display hidden" id="trick2"></div>
-                <div class="status-display" id="status2">Distance: 0m</div>
+        <div class="game-view" id="view2">
+            <div class="hud" id="hud2">
+                <div class="speed-display" id="speed2">250 km/h</div>
+                <div class="speed-bar" id="speedBar2"><div class="speed-bar-fill"></div></div>
+                <div class="fuel-display" id="fuel2">FUEL: 100%</div>
+                <div class="fuel-bar" id="fuelBar2"><div class="fuel-bar-fill"></div></div>
+                <div class="damage-display" id="damage2">DAMAGE: 0%</div>
+                <div class="damage-bar" id="damageBar2"><div class="damage-bar-fill"></div></div>
+                <div class="lap-display" id="lap2">LAP 1/3</div>
+                <div class="position-display" id="pos2">2nd</div>
+                <div class="gear-display" id="gear2">4th</div>
+                <div class="terrain-indicator" id="terrain2">TERRAIN: Dirt</div>
+                <div class="minimap" id="minimap2"></div>
             </div>
-            <div class="minimap" id="minimap2"></div>
         </div>
     </div>
 
+    <div class="lap-timer hidden" id="lapTimer"></div>
+
+    <!-- Three.js Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
 
     <script>
-        // ============== CONSTANTS ==============
-        const MAPS = {
+        // ============== GAME CONFIGURATION ==============
+        const TRACKS = {
             desert: {
                 name: 'Desert Dunes',
+                description: 'Hot sandy terrain with challenging jumps',
                 skyColor: 0xE8B98F,
                 groundColor: 0xD4A574,
                 ambientLight: 0xFFA500,
-                terrain: 'desert'
-            },
-            forest: {
-                name: 'Forest Trail',
-                skyColor: 0x87CEEB,
-                groundColor: 0x6B8E23,
-                ambientLight: 0x90EE90,
-                terrain: 'forest'
-            },
-            snow: {
-                name: 'Snow Peak',
-                skyColor: 0xE0F6FF,
-                groundColor: 0xFFFFFF,
-                ambientLight: 0xADD8E6,
-                terrain: 'snow'
+                terrain: 'desert',
+                difficulty: 'medium'
             },
             mountain: {
-                name: 'Mountain Ridge',
+                name: 'Mountain Trail',
+                description: 'Rocky mountain paths with elevation changes',
                 skyColor: 0x87CEEB,
                 groundColor: 0x8B7355,
                 ambientLight: 0xFFB347,
-                terrain: 'mountain'
+                terrain: 'mountain',
+                difficulty: 'hard'
             },
-            city: {
-                name: 'City Parkour',
-                skyColor: 0x2C3E50,
-                groundColor: 0x34495E,
-                ambientLight: 0xFF9800,
-                terrain: 'city'
+            forest: {
+                name: 'Forest Path',
+                description: 'Dense trees with muddy terrain',
+                skyColor: 0x87CEEB,
+                groundColor: 0x6B8E23,
+                ambientLight: 0x90EE90,
+                terrain: 'forest',
+                difficulty: 'medium'
+            },
+            swamp: {
+                name: 'Swamp Trail',
+                description: 'Muddy waters and slippery surfaces',
+                skyColor: 0x9DB39F,
+                groundColor: 0x556B2F,
+                ambientLight: 0x808000,
+                terrain: 'swamp',
+                difficulty: 'hard'
+            },
+            beach: {
+                name: 'Beach Rally',
+                description: 'Sandy beach with water crossings',
+                skyColor: 0xE0F6FF,
+                groundColor: 0xF4A460,
+                ambientLight: 0xADD8E6,
+                terrain: 'beach',
+                difficulty: 'easy'
             }
         };
 
-        const TRICK_NAMES = ['Backflip', '360 Spin', 'Barrel Roll', 'Frontflip', '720 Spin', 'Wheelie Air', 'Perfect Landing'];
-
-        // ============== AUDIO SYSTEM ==============
-        class AudioManager {
-            constructor() {
-                this.context = null;
-                this.musicOscillator = null;
-                this.engineOscillators = [{}, {}];
-                this.musicStarted = false;
-                this.masterVolume = 0.3;
+        // ============== TERRAIN PHYSICS ==============
+        class TerrainSurface {
+            constructor(type) {
+                this.type = type;
+                this.friction = this.getFriction(type);
+                this.grip = this.getGrip(type);
+                this.damage = this.getDamageModifier(type);
+                this.color = this.getColor(type);
             }
 
-            initAudio() {
-                if (!this.context) {
-                    this.context = new (window.AudioContext || window.webkitAudioContext)();
-                    this.masterGain = this.context.createGain();
-                    this.masterGain.gain.value = this.masterVolume;
-                    this.masterGain.connect(this.context.destination);
-                    this.startBackgroundMusic();
-                }
-            }
-
-            startBackgroundMusic() {
-                if (this.musicStarted) return;
-                this.musicStarted = true;
-
-                const now = this.context.currentTime;
-                const tempo = 120;
-                const beatDuration = 60 / tempo;
-
-                // Create bass line
-                const bass = this.context.createOscillator();
-                bass.type = 'sine';
-                const bassGain = this.context.createGain();
-                bass.connect(bassGain);
-                bassGain.connect(this.masterGain);
-
-                const bassPattern = [55, 55, 73.42, 55, 55, 55, 73.42, 55];
-                let bossNote = 0;
-
-                const playBassNote = (time) => {
-                    bass.frequency.setValueAtTime(bassPattern[bossNote % bassPattern.length], time);
-                    bassGain.gain.setValueAtTime(0.1, time);
-                    bassGain.gain.exponentialRampToValueAtTime(0.01, time + beatDuration * 0.8);
-                    bossNote++;
-                    this.context.audioWorklet ? 
-                        this.context.resume().then(() => this.context.audioWorklet.port.postMessage({type: 'scheduleBass', time: time + beatDuration})) 
-                        : setTimeout(() => playBassNote(time + beatDuration), beatDuration * 1000);
+            getFriction(type) {
+                const frictions = {
+                    asphalt: 0.8,
+                    dirt: 0.6,
+                    mud: 0.3,
+                    sand: 0.5,
+                    grass: 0.5,
+                    gravel: 0.4,
+                    water: 0.2
                 };
-
-                playBassNote(now);
-                bass.start(now);
+                return frictions[type] || 0.5;
             }
 
-            playEngineSound(playerIndex, speed, isBoosting) {
-                if (!this.context) return;
-                
-                const freq = 100 + speed * 3 + (isBoosting ? 200 : 0);
-                const osc = this.engineOscillators[playerIndex];
-                
-                if (!osc.oscillator) {
-                    osc.oscillator = this.context.createOscillator();
-                    osc.oscillator.type = 'sawtooth';
-                    osc.gain = this.context.createGain();
-                    osc.oscillator.connect(osc.gain);
-                    osc.gain.connect(this.masterGain);
-                    osc.oscillator.start();
-                }
-                
-                osc.oscillator.frequency.setTargetAtTime(freq, this.context.currentTime, 0.05);
-                osc.gain.gain.setTargetAtTime(Math.min(speed * 0.01, 0.15), this.context.currentTime, 0.1);
-            }
-
-            playSound(type) {
-                if (!this.context) return;
-                
-                const now = this.context.currentTime;
-                const osc = this.context.createOscillator();
-                const gain = this.context.createGain();
-                osc.connect(gain);
-                gain.connect(this.masterGain);
-
-                const soundConfigs = {
-                    crash: { freq: [200, 100], duration: 0.2 },
-                    land: { freq: 400, duration: 0.1 },
-                    finish: { freq: [523.25, 659.25, 783.99], duration: 0.5 }
+            getGrip(type) {
+                const grips = {
+                    asphalt: 0.9,
+                    dirt: 0.7,
+                    mud: 0.3,
+                    sand: 0.5,
+                    grass: 0.6,
+                    gravel: 0.4,
+                    water: 0.1
                 };
+                return grips[type] || 0.5;
+            }
 
-                const config = soundConfigs[type] || { freq: 440, duration: 0.2 };
-                
-                if (Array.isArray(config.freq)) {
-                    osc.frequency.setValueAtTime(config.freq[0], now);
-                    for (let i = 1; i < config.freq.length; i++) {
-                        osc.frequency.setValueAtTime(config.freq[i], now + (config.duration / config.freq.length) * i);
-                    }
-                } else {
-                    osc.frequency.setValueAtTime(config.freq, now);
-                }
+            getDamageModifier(type) {
+                const damages = {
+                    asphalt: 0.5,
+                    dirt: 0.8,
+                    mud: 0.6,
+                    sand: 0.7,
+                    grass: 0.3,
+                    gravel: 0.9,
+                    water: 1.2
+                };
+                return damages[type] || 0.5;
+            }
 
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + config.duration);
-
-                osc.start(now);
-                osc.stop(now + config.duration);
+            getColor(type) {
+                const colors = {
+                    asphalt: 0x333333,
+                    dirt: 0x8B4513,
+                    mud: 0x556B2F,
+                    sand: 0xF4A460,
+                    grass: 0x228B22,
+                    gravel: 0x808080,
+                    water: 0x4A90E2
+                };
+                return colors[type] || 0x999999;
             }
         }
 
-        // ============== TERRAIN GENERATOR ==============
-        class TerrainGenerator {
-            static generateTerrain(mapType, scene) {
-                const geometry = new THREE.PlaneGeometry(5000, 5000, 100, 100);
-                const heights = geometry.attributes.position.array;
-
-                const scale = 0.05;
-                const frequency = 0.02;
-
-                for (let i = 0; i < heights.length; i += 3) {
-                    const x = heights[i];
-                    const z = heights[i + 2];
-                    
-                    // Perlin-like noise using sine waves
-                    let elevation = Math.sin(x * frequency) * Math.cos(z * frequency) * 50;
-                    elevation += Math.sin(x * frequency * 0.5) * Math.cos(z * frequency * 0.5) * 100;
-                    elevation += Math.sin(x * frequency * 0.1) * Math.cos(z * frequency * 0.1) * 200;
-                    
-                    // Add ramps every 500 units
-                    if (Math.abs(z % 500 - 250) < 80) {
-                        elevation += Math.sin((z % 500) / 80 * Math.PI) * 200;
-                    }
-                    
-                    heights[i + 1] = elevation;
-                }
-
-                geometry.attributes.position.needsUpdate = true;
-                geometry.computeVertexNormals();
-
-                // Create material based on map type
-                let material;
-                switch (mapType) {
-                    case 'desert':
-                        material = new THREE.MeshStandardMaterial({
-                            color: 0xD4A574,
-                            roughness: 0.8,
-                            metalness: 0.1,
-                            map: this.createTexture(128, 'desert')
-                        });
-                        break;
-                    case 'forest':
-                        material = new THREE.MeshStandardMaterial({
-                            color: 0x6B8E23,
-                            roughness: 0.9,
-                            metalness: 0,
-                            map: this.createTexture(128, 'forest')
-                        });
-                        break;
-                    case 'snow':
-                        material = new THREE.MeshStandardMaterial({
-                            color: 0xFFFFFF,
-                            roughness: 0.5,
-                            metalness: 0,
-                            map: this.createTexture(128, 'snow')
-                        });
-                        break;
-                    case 'mountain':
-                        material = new THREE.MeshStandardMaterial({
-                            color: 0x8B7355,
-                            roughness: 0.9,
-                            metalness: 0.2,
-                            map: this.createTexture(128, 'mountain')
-                        });
-                        break;
-                    case 'city':
-                        material = new THREE.MeshStandardMaterial({
-                            color: 0x34495E,
-                            roughness: 0.7,
-                            metalness: 0.3,
-                            map: this.createTexture(128, 'city')
-                        });
-                        break;
-                }
-
-                const terrain = new THREE.Mesh(geometry, material);
-                terrain.receiveShadow = true;
-                terrain.castShadow = true;
-                scene.add(terrain);
-
-                // Add obstacles
-                this.addObstacles(scene, mapType);
-                
-                return terrain;
-            }
-
-            static createTexture(size, mapType) {
-                const canvas = document.createElement('canvas');
-                canvas.width = canvas.height = size;
-                const ctx = canvas.getContext('2d');
-
-                const patterns = {
-                    desert: () => {
-                        ctx.fillStyle = '#D4A574';
-                        ctx.fillRect(0, 0, size, size);
-                        for (let i = 0; i < 50; i++) {
-                            ctx.fillStyle = `rgba(139, 90, 43, ${Math.random() * 0.3})`;
-                            ctx.fillRect(Math.random() * size, Math.random() * size, 10, 10);
-                        }
-                    },
-                    forest: () => {
-                        ctx.fillStyle = '#6B8E23';
-                        ctx.fillRect(0, 0, size, size);
-                        for (let i = 0; i < 100; i++) {
-                            ctx.fillStyle = `rgba(34, 139, 34, ${Math.random() * 0.4})`;
-                            ctx.fillRect(Math.random() * size, Math.random() * size, 8, 8);
-                        }
-                    },
-                    snow: () => {
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(0, 0, size, size);
-                        for (let i = 0; i < 30; i++) {
-                            ctx.fillStyle = `rgba(200, 220, 255, ${Math.random() * 0.3})`;
-                            ctx.fillRect(Math.random() * size, Math.random() * size, 15, 15);
-                        }
-                    },
-                    mountain: () => {
-                        ctx.fillStyle = '#8B7355';
-                        ctx.fillRect(0, 0, size, size);
-                        for (let i = 0; i < 60; i++) {
-                            ctx.fillStyle = `rgba(128, 128, 128, ${Math.random() * 0.4})`;
-                            ctx.fillRect(Math.random() * size, Math.random() * size, 12, 12);
-                        }
-                    },
-                    city: () => {
-                        ctx.fillStyle = '#34495E';
-                        ctx.fillRect(0, 0, size, size);
-                        ctx.strokeStyle = '#7F8C8D';
-                        for (let i = 0; i < size; i += 20) {
-                            ctx.strokeRect(i, 0, 10, size);
-                            ctx.strokeRect(0, i, size, 10);
-                        }
-                    }
-                };
-
-                patterns[mapType]();
-                return new THREE.CanvasTexture(canvas);
-            }
-
-            static addObstacles(scene, mapType) {
-                const obstacleCount = mapType === 'city' ? 20 : 15;
-                
-                for (let i = 0; i < obstacleCount; i++) {
-                    const x = (Math.random() - 0.5) * 4000;
-                    const z = Math.random() * 4000 - 2000;
-                    const y = 100;
-
-                    let obstacle;
-                    const obstacleType = Math.floor(Math.random() * 3);
-
-                    switch (obstacleType) {
-                        case 0: // Rock
-                            obstacle = new THREE.Mesh(
-                                new THREE.DodecahedronGeometry(40 + Math.random() * 30),
-                                new THREE.MeshStandardMaterial({ color: 0x8B7355, roughness: 0.8 })
-                            );
-                            break;
-                        case 1: // Tree/Bush
-                            const trunkGeo = new THREE.CylinderGeometry(20, 30, 80, 8);
-                            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-                            obstacle = new THREE.Mesh(trunkGeo, trunkMat);
-                            
-                            const foliageGeo = new THREE.ConeGeometry(50, 100, 8);
-                            const foliageMat = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-                            const foliage = new THREE.Mesh(foliageGeo, foliageMat);
-                            foliage.position.y = 60;
-                            obstacle.add(foliage);
-                            break;
-                        case 2: // Building/Container
-                            obstacle = new THREE.Mesh(
-                                new THREE.BoxGeometry(60, 100, 60),
-                                new THREE.MeshStandardMaterial({ color: 0x696969, metalness: 0.3 })
-                            );
-                            break;
-                    }
-
-                    obstacle.position.set(x, y, z);
-                    obstacle.castShadow = true;
-                    obstacle.receiveShadow = true;
-                    scene.add(obstacle);
-                }
-            }
-        }
-
-        // ============== BIKE PHYSICS ==============
+        // ============== ADVANCED BIKE PHYSICS ==============
         class BikePhysics {
-            constructor() {
-                this.position = new THREE.Vector3(0, 100, 0);
+            constructor(playerIndex) {
+                this.playerIndex = playerIndex;
+                this.position = new THREE.Vector3(playerIndex === 0 ? -300 : 300, 150, -1500);
                 this.velocity = new THREE.Vector3(0, 0, 0);
+                this.acceleration = new THREE.Vector3(0, 0, 0);
                 this.rotation = new THREE.Euler(0, 0, 0, 'YXZ');
                 this.angularVelocity = new THREE.Vector3(0, 0, 0);
-                
+
                 // Physics parameters
-                this.mass = 200;
-                this.maxSpeed = 800;
-                this.acceleration = 15;
-                this.friction = 0.02;
-                this.airResistance = 0.01;
-                this.gravityForce = 0.5;
-                
-                // Suspension
-                this.suspensionSpring = 0.2;
-                this.suspensionDamping = 0.3;
-                this.wheelHeights = [0, 0];
-                this.targetWheelHeights = [0, 0];
-                
-                // State
-                this.isOnGround = false;
-                this.wheelieAmount = 0;
-                this.stoppieAmount = 0;
-                this.comboMultiplier = 1;
-                this.landingSoft = false;
-                
+                this.mass = 250;
+                this.maxSpeed = 150; // m/s
+                this.enginePower = 500;
+                this.brake = 0;
+                this.thrustForce = 0;
+                this.gear = 1;
+                this.rpm = 0;
+                this.maxRPM = 8000;
+
+                // Wheel physics
+                this.wheelRadius = 0.4;
+                this.wheelbase = 1.8;
+                this.trackWidth = 1.2;
+                this.wheelSuspension = [0, 0];
+                this.wheelVelocities = [0, 0];
+                this.wheelGroundContact = [false, false];
+
+                // Traction & grip
+                this.traction = 1.0;
+                this.lateralGrip = 0.8;
+                this.longGrip = 0.9;
+                this.slipAngle = 0;
+
+                // Environmental
+                this.currentTerrain = new TerrainSurface('dirt');
+                this.fuel = 100;
+                this.damage = 0;
+                this.isAirborne = false;
+                this.speed = 0;
+                this.distanceTraveled = 0;
+
                 // Input
                 this.input = {
-                    forward: 0,
-                    backward: 0,
-                    left: 0,
-                    right: 0,
-                    boost: false,
-                    wheelie: 0,
-                    stoppie: 0
+                    throttle: 0,
+                    brake: 0,
+                    steering: 0,
+                    boost: false
                 };
+
+                this.lapStartTime = 0;
+                this.lapNumber = 1;
+                this.checkpointsPassed = 0;
             }
 
-            update(terrain) {
-                // Apply gravity
-                this.velocity.y -= this.gravityForce;
-                
-                // Apply engine force
-                const forwardForce = (this.input.forward - this.input.backward) * this.acceleration;
-                const boostMultiplier = this.input.boost ? 2.5 : 1;
-                
-                const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(
-                    new THREE.Quaternion().setFromEuler(this.rotation)
-                );
-                
-                this.velocity.x += direction.x * forwardForce * boostMultiplier;
-                this.velocity.z += direction.z * forwardForce * boostMultiplier;
-                
-                // Apply air resistance
-                this.velocity.multiplyScalar(1 - this.airResistance);
-                
-                // Apply friction on ground
-                if (this.isOnGround) {
-                    this.velocity.x *= (1 - this.friction);
-                    this.velocity.z *= (1 - this.friction);
-                }
-                
-                // Limit speed
-                const horizontalSpeed = Math.sqrt(this.velocity.x ** 2 + this.velocity.z ** 2);
-                if (horizontalSpeed > this.maxSpeed) {
-                    const scale = this.maxSpeed / horizontalSpeed;
-                    this.velocity.x *= scale;
-                    this.velocity.z *= scale;
-                }
-                
+            update(deltaTime, terrain) {
+                deltaTime = Math.min(deltaTime, 0.016); // Cap at 60fps
+
+                // Engine simulation
+                this.updateEngine(deltaTime);
+
+                // Calculate forces
+                this.calculateForces(deltaTime);
+
+                // Update velocity
+                this.velocity.add(this.acceleration.clone().multiplyScalar(deltaTime));
+
+                // Apply drag
+                this.applyDrag();
+
                 // Update position
-                this.position.add(this.velocity);
-                
-                // Handle steering
-                if (this.isOnGround) {
-                    this.rotation.y += (this.input.left - this.input.right) * 0.05;
+                this.position.add(this.velocity.clone().multiplyScalar(deltaTime));
+
+                // Steering
+                if (this.wheelGroundContact[0] || this.wheelGroundContact[1]) {
+                    const steerAngle = this.input.steering * 0.3;
+                    this.rotation.y += steerAngle * deltaTime;
                 }
-                
-                // Update wheelie/stoppie
-                this.wheelieAmount += this.input.wheelie * 0.02;
-                this.stoppieAmount += this.input.stoppie * 0.02;
-                this.wheelieAmount = THREE.MathUtils.clamp(this.wheelieAmount, -0.3, 0.8);
-                this.stoppieAmount = THREE.MathUtils.clamp(this.stoppieAmount, -0.3, 0.3);
-                
-                // Aerial rotation
-                if (!this.isOnGround) {
-                    this.angularVelocity.x += this.input.left * 0.002;
-                    this.angularVelocity.z -= this.input.forward * 0.002;
-                    
-                    this.rotation.x += this.angularVelocity.x;
-                    this.rotation.y += this.angularVelocity.y;
-                    this.rotation.z += this.angularVelocity.z;
-                    
-                    this.angularVelocity.multiplyScalar(0.98);
-                }
-                
-                // Ground detection
-                const groundY = this.getTerrainHeight(terrain, this.position.x, this.position.z);
-                this.isOnGround = this.position.y <= groundY + 80;
-                
-                if (this.isOnGround) {
-                    this.position.y = groundY + 80;
-                    this.velocity.y *= 0.6;
-                    this.angularVelocity.multiplyScalar(0.8);
-                    this.landingSoft = Math.abs(this.velocity.y) < 5;
+
+                // Maintain height above ground
+                const groundHeight = this.getTerrainHeight(terrain);
+                if (this.position.y < groundHeight + 2) {
+                    this.position.y = groundHeight + 2;
+                    this.velocity.y = Math.max(0, this.velocity.y);
+                    this.isAirborne = false;
                 } else {
-                    this.landingSoft = false;
+                    this.isAirborne = true;
+                    this.velocity.y -= 9.81 * deltaTime; // Gravity
                 }
-                
-                // Clamp to world bounds
+
+                // Update odometer
+                this.speed = this.velocity.length();
+                this.distanceTraveled += this.speed * deltaTime;
+
+                // Fuel consumption
+                this.fuel -= (this.speed / 100) * deltaTime * 0.5;
+                this.fuel = Math.max(0, this.fuel);
+
+                // World bounds
                 this.position.x = THREE.MathUtils.clamp(this.position.x, -2500, 2500);
                 this.position.z = THREE.MathUtils.clamp(this.position.z, -2500, 4500);
             }
 
-            getTerrainHeight(terrain, x, z) {
-                const geometry = terrain.geometry;
-                const posAttribute = geometry.attributes.position;
-                const positions = posAttribute.array;
+            updateEngine(deltaTime) {
+                // RPM calculation
+                this.rpm = 1000 + (this.speed * 50);
+                this.rpm = Math.min(this.rpm, this.maxRPM);
 
-                // Simple raycasting from above
-                const raycaster = new THREE.Raycaster(new THREE.Vector3(x, 5000, z), new THREE.Vector3(0, -1, 0));
+                // Gear shifting logic
+                if (this.rpm > this.maxRPM * 0.8 && this.gear < 6) {
+                    this.gear += 1;
+                } else if (this.rpm < 2000 && this.gear > 1) {
+                    this.gear -= 1;
+                }
+            }
+
+            calculateForces(deltaTime) {
+                this.acceleration.set(0, 0, 0);
+
+                // Get bike direction
+                const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(
+                    new THREE.Quaternion().setFromEuler(this.rotation)
+                );
+
+                // Traction based on terrain
+                const tractionModifier = this.currentTerrain.grip;
+
+                // Thrust force
+                this.thrustForce = this.input.throttle * this.enginePower * tractionModifier;
+                if (this.input.boost && this.fuel > 10) {
+                    this.thrustForce *= 1.5;
+                    this.fuel -= 0.2;
+                }
+
+                // Apply thrust
+                this.acceleration.x += direction.x * this.thrustForce;
+                this.acceleration.z += direction.z * this.thrustForce;
+                this.acceleration.divideScalar(this.mass);
+
+                // Braking
+                if (this.input.brake > 0) {
+                    const brakePower = this.input.brake * 800 * this.currentTerrain.friction;
+                    const brakeDir = this.velocity.clone().normalize();
+                    this.acceleration.sub(brakeDir.multiplyScalar(brakePower / this.mass));
+                }
+
+                // Friction
+                const frictionForce = this.currentTerrain.friction * 20;
+                const frictionDir = this.velocity.clone().normalize();
+                if (this.velocity.length() > 0.1) {
+                    this.acceleration.sub(frictionDir.multiplyScalar(frictionForce / this.mass));
+                }
+            }
+
+            applyDrag() {
+                const airDensity = 0.02;
+                const dragCoefficient = 0.3;
+                const referenceArea = 0.5;
+
+                const speed = this.velocity.length();
+                const dragMagnitude = 0.5 * airDensity * dragCoefficient * referenceArea * speed * speed;
+
+                if (speed > 0) {
+                    const dragVector = this.velocity.clone().normalize().multiplyScalar(dragMagnitude / this.mass);
+                    this.velocity.sub(dragVector);
+                }
+            }
+
+            getTerrainHeight(terrain) {
+                const raycaster = new THREE.Raycaster(
+                    new THREE.Vector3(this.position.x, 500, this.position.z),
+                    new THREE.Vector3(0, -1, 0)
+                );
                 const intersects = raycaster.intersectObject(terrain);
-                
+
                 if (intersects.length > 0) {
+                    this.updateTerrainType(intersects[0]);
                     return intersects[0].point.y;
                 }
                 return 0;
             }
 
-            getSpeed() {
-                return Math.sqrt(this.velocity.x ** 2 + this.velocity.z ** 2);
+            updateTerrainType(intersection) {
+                // Simplified terrain detection based on position
+                const x = this.position.x;
+                const z = this.position.z;
+
+                let terrainType = 'dirt';
+                if (Math.abs(x) > 2000 || Math.abs(z) > 3500) {
+                    terrainType = 'sand';
+                } else if (Math.abs(z) > 2500) {
+                    terrainType = 'mud';
+                }
+
+                this.currentTerrain = new TerrainSurface(terrainType);
             }
 
-            getSpeedKmh() {
-                return Math.round(this.getSpeed() * 3.6);
-            }
-
-            reset(startPosition = new THREE.Vector3(0, 100, -1500)) {
-                this.position = startPosition.clone();
+            reset() {
+                this.position = new THREE.Vector3(this.playerIndex === 0 ? -300 : 300, 150, -1500);
                 this.velocity = new THREE.Vector3(0, 0, 0);
                 this.rotation = new THREE.Euler(0, 0, 0, 'YXZ');
-                this.angularVelocity = new THREE.Vector3(0, 0, 0);
-                this.wheelieAmount = 0;
-                this.stoppieAmount = 0;
-                this.comboMultiplier = 1;
+                this.fuel = 100;
+                this.damage = 0;
+                this.gear = 1;
+                this.rpm = 0;
+                this.distanceTraveled = 0;
+                this.lapNumber = 1;
             }
         }
 
-        // ============== MAIN GAME ==============
+        // ============== CAMERA SYSTEM ==============
+        class CameraController {
+            constructor(playerIndex) {
+                this.playerIndex = playerIndex;
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / window.innerHeight, 0.1, 10000);
+                this.mode = 'chase'; // chase, hood, orbit
+                this.target = new THREE.Vector3();
+                this.offset = new THREE.Vector3(0, 4, 8);
+            }
+
+            update(bike) {
+                const bikeDirection = new THREE.Vector3(0, 0, -1).applyQuaternion(
+                    new THREE.Quaternion().setFromEuler(bike.rotation)
+                );
+
+                switch (this.mode) {
+                    case 'chase':
+                        this.updateChaseCamera(bike, bikeDirection);
+                        break;
+                    case 'hood':
+                        this.updateHoodCamera(bike, bikeDirection);
+                        break;
+                    case 'orbit':
+                        this.updateOrbitCamera(bike);
+                        break;
+                }
+
+                this.camera.lookAt(bike.position);
+            }
+
+            updateChaseCamera(bike, direction) {
+                const distance = 8 + (bike.speed / 100) * 2;
+                const height = 4;
+
+                const offset = direction.clone().multiplyScalar(-distance).add(new THREE.Vector3(0, height, 0));
+                this.camera.position.lerp(bike.position.clone().add(offset), 0.1);
+            }
+
+            updateHoodCamera(bike, direction) {
+                this.camera.position.copy(bike.position).add(new THREE.Vector3(0, 1.5, 0));
+                this.camera.rotation.copy(bike.rotation);
+            }
+
+            updateOrbitCamera(bike) {
+                const angle = Date.now() * 0.0005;
+                const distance = 15;
+                const height = 8;
+
+                this.camera.position.x = bike.position.x + Math.cos(angle) * distance;
+                this.camera.position.y = bike.position.y + height;
+                this.camera.position.z = bike.position.z + Math.sin(angle) * distance;
+            }
+
+            setMode(mode) {
+                if (['chase', 'hood', 'orbit'].includes(mode)) {
+                    this.mode = mode;
+                }
+            }
+
+            setAspect(width, height) {
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+            }
+        }
+
+        // ============== AUDIO MANAGER ==============
+        class AudioManager {
+            constructor() {
+                this.audioContext = null;
+                this.masterVolume = 1.0;
+                this.musicVolume = 1.0;
+                this.sfxVolume = 1.0;
+                this.initialized = false;
+            }
+
+            init() {
+                if (this.initialized) return;
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.masterGain = this.audioContext.createGain();
+                this.musicGain = this.audioContext.createGain();
+                this.sfxGain = this.audioContext.createGain();
+
+                this.masterGain.connect(this.audioContext.destination);
+                this.musicGain.connect(this.masterGain);
+                this.sfxGain.connect(this.masterGain);
+
+                this.setVolume(100);
+                this.initialized = true;
+            }
+
+            setVolume(level) {
+                this.masterVolume = level / 100;
+                this.masterGain.gain.value = this.masterVolume;
+            }
+
+            playEngineSound(speed, boost) {
+                if (!this.initialized) return;
+                const freq = 200 + (speed * 2) + (boost ? 300 : 0);
+                // Engine sound synthesis would go here
+            }
+
+            playSound(type) {
+                if (!this.initialized) return;
+                // Sound effect synthesis would go here
+            }
+        }
+
+        // ============== MAIN GAME CLASS ==============
         class Game {
             constructor() {
-                this.scene = new THREE.Scene();
-                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.renderer.shadowMap.enabled = true;
-                this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
-                document.body.appendChild(this.renderer.domElement);
-
+                this.selectedTrack = 'desert';
+                this.gameState = 'menu'; // menu, settings, racing, paused, finished
+                this.bikes = [new BikePhysics(0), new BikePhysics(1)];
                 this.audioManager = new AudioManager();
-                this.selectedMap = 'desert';
-                this.gameState = 'intro'; // intro, countdown, racing, finished
-                this.raceTime = 0;
-                this.countdownTime = 3;
-
-                this.bikes = [new BikePhysics(), new BikePhysics()];
-                this.bikes[1].position.x = 200;
-
+                this.cameras = [new CameraController(0), new CameraController(1)];
+                this.renderer = null;
+                this.scenes = [null, null];
                 this.terrain = null;
                 this.bikeModels = [null, null];
-                this.riders = [null, null];
-                this.cameras = [null, null];
-                this.scenes = [new THREE.Scene(), new THREE.Scene()];
-                this.renderers = [null, null];
-                this.finishLines = [];
-                this.checkpoints = [];
-
-                this.playerLaps = [0, 0];
-                this.playerDistances = [0, 0];
-                this.playerFinished = [false, false];
-                this.riderLeanMultiplier = [0, 0];
-                this.lastTrickDisplay = [0, 0];
-                this.comboCounter = [0, 0];
+                this.raceStartTime = 0;
+                this.raceDuration = 0;
+                this.laps = 3;
+                this.graphics = 'high';
+                this.cameraMode = 'chase';
+                this.difficulty = 2;
 
                 this.keysPressed = {};
                 this.setupEventListeners();
-                this.setupIntro();
+                this.setupMenu();
             }
 
             setupEventListeners() {
                 window.addEventListener('keydown', (e) => {
                     this.keysPressed[e.key.toLowerCase()] = true;
-                    if (this.gameState === 'intro') {
-                        this.handleIntroInput(e.key.toLowerCase());
-                    }
-                    if (e.key.toLowerCase() === 'r') {
-                        this.restartRace();
+                    if (e.key.toLowerCase() === 'escape') {
+                        if (this.gameState === 'racing') {
+                            this.pauseRace();
+                        }
                     }
                 });
                 window.addEventListener('keyup', (e) => this.keysPressed[e.key.toLowerCase()] = false);
                 window.addEventListener('resize', () => this.onWindowResize());
             }
 
-            handleIntroInput(key) {
-                if (key !== 'r' && this.gameState === 'intro') {
-                    const startButton = document.querySelector('.map-button.selected');
-                    if (startButton) {
-                        this.startRace();
-                    }
-                }
-            }
+            setupMenu() {
+                this.gameState = 'menu';
+                const selector = document.getElementById('trackSelector');
+                selector.innerHTML = '';
 
-            setupIntro() {
-                const mapSelector = document.getElementById('mapSelector');
-                mapSelector.innerHTML = '';
-                
-                Object.entries(MAPS).forEach(([key, map]) => {
+                Object.entries(TRACKS).forEach(([key, track]) => {
                     const button = document.createElement('button');
-                    button.className = 'map-button' + (key === 'desert' ? ' selected' : '');
-                    button.textContent = map.name;
+                    button.className = 'track-button' + (key === this.selectedTrack ? ' selected' : '');
+                    button.innerHTML = `<strong>${track.name}</strong><br><small>${track.description}</small>`;
                     button.onclick = () => {
-                        document.querySelectorAll('.map-button').forEach(b => b.classList.remove('selected'));
+                        document.querySelectorAll('.track-button').forEach(b => b.classList.remove('selected'));
                         button.classList.add('selected');
-                        this.selectedMap = key;
+                        this.selectedTrack = key;
                     };
-                    mapSelector.appendChild(button);
+                    selector.appendChild(button);
                 });
 
-                document.getElementById('introScreen').classList.remove('hidden');
+                document.getElementById('mainMenu').classList.remove('hidden');
             }
 
             startRace() {
-                document.getElementById('introScreen').classList.add('hidden');
-                this.gameState = 'countdown';
-                this.countdownTime = 3;
-                this.raceTime = 0;
-                this.audioManager.initAudio();
+                document.getElementById('mainMenu').classList.add('hidden');
+                this.gameState = 'racing';
+                this.raceStartTime = Date.now();
+                this.bikes.forEach(bike => bike.reset());
 
-                // Initialize scenes
-                this.initializeRaceScene();
-            }
-
-            initializeRaceScene() {
-                this.scenes.forEach((scene, idx) => {
-                    scene.clear();
-                    this.setupScene(scene, idx);
-                });
-                
+                // Initialize Three.js scene
+                this.initializeThreeJs();
                 this.animate();
             }
 
-            setupScene(scene, playerIndex) {
-                const mapConfig = MAPS[this.selectedMap];
+            initializeThreeJs() {
+                const container = document.getElementById('gameContainer');
+                
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+                
+                container.appendChild(this.renderer.domElement);
 
-                // Skybox
-                this.addSkybox(scene, mapConfig);
+                // Create two scenes
+                for (let i = 0; i < 2; i++) {
+                    this.scenes[i] = new THREE.Scene();
+                    this.scenes[i].background = new THREE.Color(TRACKS[this.selectedTrack].skyColor);
+                    this.setupScene(this.scenes[i], i);
+                }
+
+                this.setupInput();
+            }
+
+            setupScene(scene, playerIndex) {
+                const trackConfig = TRACKS[this.selectedTrack];
 
                 // Lighting
-                const ambientLight = new THREE.AmbientLight(mapConfig.ambientLight, 0.7);
+                const ambientLight = new THREE.AmbientLight(trackConfig.ambientLight, 0.7);
                 scene.add(ambientLight);
 
-                const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.8);
+                const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.9);
                 directionalLight.position.set(500, 1000, 500);
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = 2048;
                 directionalLight.shadow.mapSize.height = 2048;
-                directionalLight.shadow.camera.far = 3000;
-                directionalLight.shadow.camera.left = -2500;
-                directionalLight.shadow.camera.right = 2500;
-                directionalLight.shadow.camera.top = 2500;
-                directionalLight.shadow.camera.bottom = -2500;
                 scene.add(directionalLight);
 
                 // Terrain
                 if (!this.terrain) {
-                    this.terrain = TerrainGenerator.generateTerrain(mapConfig.terrain, scene);
-                } else {
-                    scene.add(this.terrain);
+                    this.terrain = this.generateTerrain(trackConfig);
                 }
+                scene.add(this.terrain);
 
-                // Checkpoints and finish lines
-                if (this.finishLines.length === 0) {
-                    this.createRaceCheckpoints(scene);
-                }
-
-                // Bike models
+                // Bike model
                 if (!this.bikeModels[playerIndex]) {
-                    this.bikeModels[playerIndex] = this.createBikeModel(playerIndex, scene);
-                    this.riders[playerIndex] = this.createRider(playerIndex, this.bikeModels[playerIndex]);
-                } else {
-                    scene.add(this.bikeModels[playerIndex]);
+                    this.bikeModels[playerIndex] = this.createBikeModel();
                 }
+                scene.add(this.bikeModels[playerIndex]);
 
-                // Camera setup
-                this.cameras[playerIndex] = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / window.innerHeight, 0.1, 10000);
-                this.renderers[playerIndex] = this.renderer;
+                // Checkpoints
+                this.createCheckpoints(scene);
             }
 
-            addSkybox(scene, mapConfig) {
-                const skyGeometry = new THREE.SphereGeometry(3000, 32, 32);
-                const skyMaterial = new THREE.MeshBasicMaterial({
-                    color: mapConfig.skyColor,
-                    side: THREE.BackSide
+            generateTerrain(trackConfig) {
+                const geometry = new THREE.PlaneGeometry(5000, 5000, 128, 128);
+                const positions = geometry.attributes.position.array;
+
+                for (let i = 0; i < positions.length; i += 3) {
+                    const x = positions[i];
+                    const z = positions[i + 2];
+
+                    let elevation = Math.sin(x * 0.01) * Math.cos(z * 0.01) * 100;
+                    elevation += Math.sin(x * 0.005) * Math.cos(z * 0.005) * 200;
+                    if (Math.abs(z % 600 - 300) < 100) {
+                        elevation += 150;
+                    }
+
+                    positions[i + 1] = elevation;
+                }
+
+                geometry.attributes.position.needsUpdate = true;
+                geometry.computeVertexNormals();
+
+                const material = new THREE.MeshStandardMaterial({
+                    color: trackConfig.groundColor,
+                    roughness: 0.8,
+                    metalness: 0.1
                 });
-                const skyMesh = new THREE.Mesh(skyGeometry, skyMaterial);
-                scene.add(skyMesh);
 
-                // Add clouds
-                for (let i = 0; i < 20; i++) {
-                    const cloudGeo = new THREE.SphereGeometry(100 + Math.random() * 100, 8, 8);
-                    const cloudMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.6 });
-                    const cloud = new THREE.Mesh(cloudGeo, cloudMat);
-                    cloud.position.set(
-                        (Math.random() - 0.5) * 4000,
-                        500 + Math.random() * 1000,
-                        (Math.random() - 0.5) * 4000
-                    );
-                    scene.add(cloud);
-                }
+                const terrain = new THREE.Mesh(geometry, material);
+                terrain.receiveShadow = true;
+                terrain.castShadow = true;
+
+                return terrain;
             }
 
-            createRaceCheckpoints(scene) {
-                // Checkpoints along Z-axis
-                const checkpointPositions = [-1000, 0, 1000, 2000];
-                
-                checkpointPositions.forEach((z, idx) => {
-                    const checkpointGeo = new THREE.BoxGeometry(1000, 200, 50);
-                    const checkpointMat = new THREE.MeshStandardMaterial({
+            createBikeModel() {
+                const group = new THREE.Group();
+
+                // Main body
+                const bodyGeometry = new THREE.BoxGeometry(0.8, 1.2, 2.2);
+                const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xFF6B00, metalness: 0.3 });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.castShadow = true;
+                group.add(body);
+
+                // Wheels
+                for (let i = 0; i < 2; i++) {
+                    const wheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 16);
+                    const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
+                    const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                    wheel.rotation.z = Math.PI / 2;
+                    wheel.position.z = (i === 0 ? 1 : -1) * 1.2;
+                    wheel.castShadow = true;
+                    group.add(wheel);
+                }
+
+                return group;
+            }
+
+            createCheckpoints(scene) {
+                const checkpoints = [-1000, 0, 1000, 2000];
+                checkpoints.forEach((z) => {
+                    const geo = new THREE.BoxGeometry(1200, 200, 80);
+                    const mat = new THREE.MeshStandardMaterial({
                         color: 0x00FF41,
                         emissive: 0x00AA00,
                         transparent: true,
                         opacity: 0.3
                     });
-                    const checkpoint = new THREE.Mesh(checkpointGeo, checkpointMat);
+                    const checkpoint = new THREE.Mesh(geo, mat);
                     checkpoint.position.set(0, 100, z);
-                    checkpoint.userData.type = 'checkpoint';
-                    checkpoint.userData.index = idx;
                     scene.add(checkpoint);
-                    this.checkpoints.push(checkpoint);
-                });
-
-                // Finish line (lap 3 end)
-                const finishGeo = new THREE.BoxGeometry(1000, 300, 100);
-                const finishMat = new THREE.MeshStandardMaterial({
-                    color: 0xFFD700,
-                    emissive: 0xFF6B00,
-                    wireframe: true
-                });
-                const finishLine = new THREE.Mesh(finishGeo, finishMat);
-                finishLine.position.set(0, 150, 2500);
-                finishLine.userData.type = 'finish';
-                scene.add(finishLine);
-                this.finishLines.push(finishLine);
-            }
-
-            createBikeModel(playerIndex, scene) {
-                const bikeGroup = new THREE.Group();
-
-                // Frame
-                const frameGeo = new THREE.BoxGeometry(30, 60, 150);
-                const frameMat = new THREE.MeshStandardMaterial({
-                    color: playerIndex === 0 ? 0xFF0000 : 0x0000FF,
-                    metalness: 0.7,
-                    roughness: 0.3
-                });
-                const frame = new THREE.Mesh(frameGeo, frameMat);
-                frame.castShadow = true;
-                frame.receiveShadow = true;
-                bikeGroup.add(frame);
-
-                // Wheels
-                const wheelGeo = new THREE.CylinderGeometry(35, 35, 20, 16);
-                const wheelMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8 });
-                
-                const wheelPositions = [
-                    { x: -40, z: -50 },
-                    { x: -40, z: 50 }
-                ];
-
-                wheelPositions.forEach((pos, idx) => {
-                    const wheel = new THREE.Mesh(wheelGeo, wheelMat);
-                    wheel.rotation.z = Math.PI / 2;
-                    wheel.position.set(pos.x, 0, pos.z);
-                    wheel.castShadow = true;
-                    wheel.receiveShadow = true;
-                    bikeGroup.add(wheel);
-                });
-
-                // Handlebars
-                const handlebarGeo = new THREE.BoxGeometry(80, 15, 15);
-                const handlebarMat = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-                const handlebars = new THREE.Mesh(handlebarGeo, handlebarMat);
-                handlebars.position.set(0, 35, -60);
-                handlebars.castShadow = true;
-                bikeGroup.add(handlebars);
-
-                // Seat
-                const seatGeo = new THREE.BoxGeometry(40, 20, 50);
-                const seatMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
-                const seat = new THREE.Mesh(seatGeo, seatMat);
-                seat.position.set(0, 20, -10);
-                seat.castShadow = true;
-                bikeGroup.add(seat);
-
-                // Engine
-                const engineGeo = new THREE.CylinderGeometry(30, 30, 80, 8);
-                const engineMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.6 });
-                const engine = new THREE.Mesh(engineGeo, engineMat);
-                engine.position.set(0, 15, 0);
-                engine.castShadow = true;
-                bikeGroup.add(engine);
-
-                bikeGroup.position.copy(this.bikes[playerIndex].position);
-                bikeGroup.rotation.order = 'YXZ';
-                scene.add(bikeGroup);
-                return bikeGroup;
-            }
-
-            createRider(playerIndex, bikeModel) {
-                const riderGroup = new THREE.Group();
-
-                // Head
-                const headGeo = new THREE.SphereGeometry(20, 8, 8);
-                const headMat = new THREE.MeshStandardMaterial({ color: 0xFFCC99 });
-                const head = new THREE.Mesh(headGeo, headMat);
-                head.position.y = 120;
-                head.castShadow = true;
-                riderGroup.add(head);
-
-                // Helmet
-                const helmetGeo = new THREE.SphereGeometry(25, 8, 8);
-                const helmetMat = new THREE.MeshStandardMaterial({
-                    color: playerIndex === 0 ? 0xFF0000 : 0x0000FF,
-                    metalness: 0.5
-                });
-                const helmet = new THREE.Mesh(helmetGeo, helmetMat);
-                helmet.position.y = 125;
-                helmet.castShadow = true;
-                riderGroup.add(helmet);
-
-                // Body
-                const bodyGeo = new THREE.BoxGeometry(30, 50, 40);
-                const bodyMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
-                const body = new THREE.Mesh(bodyGeo, bodyMat);
-                body.position.y = 70;
-                body.castShadow = true;
-                riderGroup.add(body);
-
-                // Arms
-                const armGeo = new THREE.BoxGeometry(15, 50, 15);
-                const armMat = new THREE.MeshStandardMaterial({ color: 0xFFCC99 });
-                [-1, 1].forEach(side => {
-                    const arm = new THREE.Mesh(armGeo, armMat);
-                    arm.position.set(side * 30, 80, -10);
-                    arm.castShadow = true;
-                    riderGroup.add(arm);
-                });
-
-                bikeModel.add(riderGroup);
-                return riderGroup;
-            }
-
-            updateBike(playerIndex, deltaTime) {
-                const bike = this.bikes[playerIndex];
-                const keys = this.keysPressed;
-
-                // Update input based on player
-                if (playerIndex === 0) {
-                    bike.input.forward = keys['w'] ? 1 : 0;
-                    bike.input.backward = keys['s'] ? 1 : 0;
-                    bike.input.left = keys['a'] ? 1 : 0;
-                    bike.input.right = keys['d'] ? 1 : 0;
-                    bike.input.boost = keys[' '];
-                    bike.input.wheelie = keys['q'] ? 1 : (keys['e'] ? -1 : 0);
-                    bike.input.stoppie = keys['q'] ? 1 : (keys['e'] ? -1 : 0);
-                } else {
-                    bike.input.forward = keys['arrowup'] ? 1 : 0;
-                    bike.input.backward = keys['arrowdown'] ? 1 : 0;
-                    bike.input.left = keys['arrowleft'] ? 1 : 0;
-                    bike.input.right = keys['arrowright'] ? 1 : 0;
-                    bike.input.boost = keys['shift'];
-                    bike.input.wheelie = keys['q'] ? 1 : (keys['e'] ? -1 : 0);
-                    bike.input.stoppie = keys['q'] ? 1 : (keys['e'] ? -1 : 0);
-                }
-
-                // Update physics
-                bike.update(this.terrain);
-
-                // Update bike model
-                const bikeModel = this.bikeModels[playerIndex];
-                bikeModel.position.copy(bike.position);
-                bikeModel.rotation.copy(bike.rotation);
-
-                // Update rider lean
-                this.riderLeanMultiplier[playerIndex] += (bike.input.left - bike.input.right) * 0.05;
-                this.riderLeanMultiplier[playerIndex] *= 0.9;
-                this.riders[playerIndex].rotation.z = this.riderLeanMultiplier[playerIndex];
-
-                // Check trick/combo detection
-                this.checkTrickCombo(playerIndex);
-
-                // Update HUD
-                this.updateHUD(playerIndex);
-
-                // Check checkpoints and finish
-                this.checkCheckpoints(playerIndex);
-            }
-
-            checkTrickCombo(playerIndex) {
-                const bike = this.bikes[playerIndex];
-                
-                if (!bike.isOnGround && bike.landingSoft) {
-                    const rotationMagnitude = Math.abs(bike.angularVelocity.x) + Math.abs(bike.angularVelocity.z);
-                    
-                    if (rotationMagnitude > 0.5) {
-                        this.comboCounter[playerIndex]++;
-                        const trickIndex = this.comboCounter[playerIndex] % TRICK_NAMES.length;
-                        const trickName = TRICK_NAMES[trickIndex];
-                        
-                        const trickDisplay = document.getElementById(`trick${playerIndex + 1}`);
-                        trickDisplay.textContent = `✓ ${trickName}! Combo x${this.comboCounter[playerIndex]}`;
-                        trickDisplay.classList.remove('hidden');
-                        
-                        this.lastTrickDisplay[playerIndex] = Date.now();
-                        this.audioManager.playSound('land');
-                    }
-                } else if (bike.isOnGround && Math.abs(bike.velocity.y) > 10) {
-                    this.comboCounter[playerIndex] = 0;
-                }
-
-                // Hide trick display after 2 seconds
-                if (Date.now() - this.lastTrickDisplay[playerIndex] > 2000) {
-                    document.getElementById(`trick${playerIndex + 1}`).classList.add('hidden');
-                }
-            }
-
-            checkCheckpoints(playerIndex) {
-                const bike = this.bikes[playerIndex];
-                
-                this.finishLines.forEach(finish => {
-                    const distance = bike.position.distanceTo(finish.position);
-                    if (distance < 300 && !this.playerFinished[playerIndex]) {
-                        this.playerLaps[playerIndex]++;
-                        if (this.playerLaps[playerIndex] >= 3) {
-                            this.playerFinished[playerIndex] = true;
-                            this.audioManager.playSound('finish');
-                            this.checkRaceFinish();
-                        }
-                    }
                 });
             }
 
-            updateHUD(playerIndex) {
-                const bike = this.bikes[playerIndex];
-                const speedDisplay = document.getElementById(`speed${playerIndex + 1}`);
-                const lapDisplay = document.getElementById(`lap${playerIndex + 1}`);
-                const statusDisplay = document.getElementById(`status${playerIndex + 1}`);
+            setupInput() {
+                this.inputInterval = setInterval(() => {
+                    if (this.gameState !== 'racing') return;
 
-                speedDisplay.textContent = `Speed: ${bike.getSpeedKmh()} km/h`;
-                lapDisplay.textContent = `Lap: ${Math.min(this.playerLaps[playerIndex] + 1, 3)}/3`;
-                
-                const progress = Math.round(((bike.position.z + 1500) / 4000) * 100);
-                statusDisplay.textContent = `Progress: ${Math.min(progress, 100)}%`;
-            }
+                    // Player 1 (WASD + QE)
+                    this.bikes[0].input.throttle = this.keysPressed['w'] ? 1 : 0;
+                    this.bikes[0].input.brake = this.keysPressed['s'] ? 1 : 0;
+                    this.bikes[0].input.steering = (this.keysPressed['d'] ? 1 : 0) - (this.keysPressed['a'] ? 1 : 0);
+                    this.bikes[0].input.boost = this.keysPressed[' '];
 
-            checkRaceFinish() {
-                if (this.playerFinished.every(f => f)) {
-                    this.gameState = 'finished';
-                    this.showFinishScreen();
-                }
-            }
-
-            showFinishScreen() {
-                const finishScreen = document.getElementById('finishScreen');
-                const finishInfo = document.getElementById('finishInfo');
-                
-                let winnerText = '';
-                if (this.playerLaps[0] > this.playerLaps[1]) {
-                    winnerText = '🏆 PLAYER 1 WINS!';
-                } else if (this.playerLaps[1] > this.playerLaps[0]) {
-                    winnerText = '🏆 PLAYER 2 WINS!';
-                } else {
-                    winnerText = '🏁 TIE RACE!';
-                }
-
-                finishInfo.innerHTML = `
-                    ${winnerText}<br>
-                    Player 1: Lap ${this.playerLaps[0]}/3<br>
-                    Player 2: Lap ${this.playerLaps[1]}/3
-                `;
-                
-                finishScreen.classList.remove('hidden');
-            }
-
-            restartRace() {
-                document.getElementById('finishScreen').classList.add('hidden');
-                document.getElementById('raceTimer').classList.add('hidden');
-                
-                this.playerLaps = [0, 0];
-                this.playerDistances = [0, 0];
-                this.playerFinished = [false, false];
-                this.comboCounter = [0, 0];
-                this.raceTime = 0;
-                this.countdownTime = 3;
-                
-                this.bikes.forEach(bike => bike.reset());
-                this.gameState = 'countdown';
-                
-                this.scenes.forEach((scene, idx) => {
-                    scene.clear();
-                    this.setupScene(scene, idx);
-                });
-
-                this.animate();
-            }
-
-            onWindowResize() {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-
-                this.renderer.setSize(width, height);
-                
-                this.cameras.forEach(cam => {
-                    if (cam) {
-                        cam.aspect = (width / 2) / height;
-                        cam.updateProjectionMatrix();
-                    }
-                });
+                    // Player 2 (Arrow keys + Shift)
+                    this.bikes[1].input.throttle = this.keysPressed['arrowup'] ? 1 : 0;
+                    this.bikes[1].input.brake = this.keysPressed['arrowdown'] ? 1 : 0;
+                    this.bikes[1].input.steering = (this.keysPressed['arrowright'] ? 1 : 0) - (this.keysPressed['arrowleft'] ? 1 : 0);
+                    this.bikes[1].input.boost = this.keysPressed['shift'];
+                }, 10);
             }
 
             animate = () => {
                 requestAnimationFrame(this.animate);
 
-                const deltaTime = 0.016; // 60 FPS
+                if (this.gameState !== 'racing') return;
 
-                // Update countdown
-                if (this.gameState === 'countdown') {
-                    this.countdownTime -= deltaTime;
-                    const countdownDisplay = document.getElementById('raceTimer');
-                    
-                    if (this.countdownTime > 0) {
-                        countdownDisplay.classList.remove('hidden');
-                        countdownDisplay.textContent = Math.ceil(this.countdownTime);
-                    } else if (this.gameState === 'countdown') {
-                        this.gameState = 'racing';
-                        countdownDisplay.classList.add('hidden');
-                    }
-                }
+                const deltaTime = 0.016;
 
                 // Update bikes
-                if (this.gameState === 'racing') {
-                    this.raceTime += deltaTime;
-                    this.updateBike(0, deltaTime);
-                    this.updateBike(1, deltaTime);
-                    
-                    // Play engine sounds
-                    this.audioManager.playEngineSound(0, this.bikes[0].getSpeed(), this.keysPressed[' ']);
-                    this.audioManager.playEngineSound(1, this.bikes[1].getSpeed(), this.keysPressed['shift']);
-                }
+                this.bikes.forEach(bike => {
+                    bike.update(deltaTime, this.terrain);
+                });
+
+                // Update cameras
+                this.cameras.forEach((cam, i) => {
+                    cam.update(this.bikes[i]);
+                });
+
+                // Update HUD
+                this.updateHUD();
 
                 // Render split screen
                 this.renderSplitScreen();
-            };
-
-            renderSplitScreen() {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-
-                // Left camera (Player 1)
-                const camera1 = this.cameras[0];
-                if (camera1) {
-                    camera1.aspect = (width / 2) / height;
-                    camera1.updateProjectionMatrix();
-                    this.updateCameraPosition(camera1, this.bikes[0]);
-                    
-                    this.renderer.setViewport(0, 0, width / 2, height);
-                    this.renderer.setScissor(0, 0, width / 2, height);
-                    this.renderer.render(this.scenes[0], camera1);
-                }
-
-                // Right camera (Player 2)
-                const camera2 = this.cameras[1];
-                if (camera2) {
-                    camera2.aspect = (width / 2) / height;
-                    camera2.updateProjectionMatrix();
-                    this.updateCameraPosition(camera2, this.bikes[1]);
-                    
-                    this.renderer.setViewport(width / 2, 0, width / 2, height);
-                    this.renderer.setScissor(width / 2, 0, width / 2, height);
-                    this.renderer.render(this.scenes[1], camera2);
-                }
-
-                this.renderer.setScissor(0, 0, width, height);
-                this.renderer.setViewport(0, 0, width, height);
             }
 
-            updateCameraPosition(camera, bike) {
-                const cameraDistance = 200;
-                const cameraHeight = 150;
+            updateHUD() {
+                for (let i = 0; i < 2; i++) {
+                    const bike = this.bikes[i];
+                    const speedKmh = Math.round(bike.speed * 3.6);
+                    
+                    document.getElementById(`speed${i + 1}`).textContent = `${speedKmh} km/h`;
+                    document.getElementById(`speedBar${i + 1}`).querySelector('.speed-bar-fill').style.width = 
+                        Math.min(speedKmh / 300, 1) * 100 + '%';
+                    
+                    document.getElementById(`fuel${i + 1}`).textContent = `FUEL: ${Math.round(bike.fuel)}%`;
+                    document.getElementById(`fuelBar${i + 1}`).querySelector('.fuel-bar-fill').style.width = 
+                        Math.max(bike.fuel, 0) + '%';
+                    
+                    document.getElementById(`damage${i + 1}`).textContent = `DAMAGE: ${Math.round(bike.damage)}%`;
+                    document.getElementById(`damageBar${i + 1}`).querySelector('.damage-bar-fill').style.width = 
+                        bike.damage + '%';
+                    
+                    document.getElementById(`gear${i + 1}`).textContent = bike.gear + '⇥';
+                    document.getElementById(`terrain${i + 1}`).textContent = 
+                        `TERRAIN: ${bike.currentTerrain.type.toUpperCase()}`;
+                    
+                    document.getElementById(`lap${i + 1}`).textContent = 
+                        `LAP ${bike.lapNumber}/${this.laps}`;
+                }
+            }
+
+            renderSplitScreen() {
+                const width = window.innerWidth / 2;
+                const height = window.innerHeight;
+
+                // Left screen
+                this.renderer.setViewport(0, 0, width, height);
+                this.renderer.render(this.scenes[0], this.cameras[0].camera);
+
+                // Right screen
+                this.renderer.setViewport(width, 0, width, height);
+                this.renderer.render(this.scenes[1], this.cameras[1].camera);
+            }
+
+            showSettings() {
+                this.gameState = this.gameState === 'racing' ? 'racing' : 'menu';
+                document.getElementById('settingsPanel').classList.remove('hidden');
                 
-                const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(
-                    new THREE.Quaternion().setFromEuler(bike.rotation)
-                );
+                // Setup event listeners
+                document.getElementById('volumeSlider').oninput = (e) => {
+                    const val = e.target.value;
+                    document.getElementById('volumeValue').textContent = val;
+                    this.audioManager.setVolume(val);
+                };
+            }
+
+            hideSettings() {
+                document.getElementById('settingsPanel').classList.add('hidden');
+            }
+
+            setGraphicsQuality(quality) {
+                this.graphics = quality;
+                document.querySelectorAll('.setting-toggle').forEach(toggle => {
+                    toggle.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                });
+                event.target.classList.add('active');
+            }
+
+            setCameraMode(mode) {
+                this.cameraMode = mode;
+                this.cameras.forEach(cam => cam.setMode(mode));
+                event.target.parentElement.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+
+            pauseRace() {
+                this.gameState = 'paused';
+                document.getElementById('pauseScreen').classList.remove('hidden');
+            }
+
+            resumeRace() {
+                this.gameState = 'racing';
+                document.getElementById('pauseScreen').classList.add('hidden');
+            }
+
+            returnToMenu() {
+                this.gameState = 'menu';
+                document.getElementById('pauseScreen').classList.add('hidden');
+                document.getElementById('finishScreen').classList.add('hidden');
+                document.getElementById('settingsPanel').classList.add('hidden');
                 
-                const cameraPos = bike.position.clone();
-                cameraPos.add(direction.multiplyScalar(cameraDistance));
-                cameraPos.y += cameraHeight;
+                if (this.inputInterval) clearInterval(this.inputInterval);
                 
-                camera.position.lerp(cameraPos, 0.1);
-                camera.lookAt(bike.position.clone().add(new THREE.Vector3(0, 50, 0)));
+                // Clear Three.js
+                if (this.renderer && this.renderer.domElement.parentNode) {
+                    this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+                }
+                
+                this.setupMenu();
+            }
+
+            onWindowResize() {
+                if (this.renderer) {
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                    this.cameras.forEach((cam, i) => {
+                        cam.setAspect(window.innerWidth / 2, window.innerHeight);
+                    });
+                }
             }
         }
 
-        // ============== INITIALIZE ==============
+        // ============== INITIALIZE GAME ==============
         const game = new Game();
     </script>
 </body>
